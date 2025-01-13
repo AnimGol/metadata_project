@@ -1,7 +1,10 @@
 import pandas as pd
+
 import matplotlib.pyplot as plt
+
 # Seaborn library is specifically designed for creating attractive and informative statistical graphics.
 import seaborn as sns
+
 # counter dictionary subclass is used for counting hashable objects (e.g., strings, numbers).
 from collections import Counter
 
@@ -9,4 +12,4 @@ from collections import Counter
 file_path = r'SPGC-metadata-2018-07-18.csv'
 metadata = pd.read_csv(file_path)
 
-print(metadata.head())
+# print(metadata.head())
