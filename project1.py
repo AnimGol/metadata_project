@@ -57,4 +57,5 @@ plt.figure(figsize=(10, 5))
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')  # Hide the axes
 plt.title("Word Map of Subjects", fontsize=16)
+plt.savefig("wordcloud.png")
 plt.show()
