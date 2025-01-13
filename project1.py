@@ -26,5 +26,8 @@ subjects_list = metadata.iloc[:, 7].tolist()
 #print(subjects_list)
 
 
-print(data['language'].unique())
+#finfing inconsistency in language row
+print(metadata['language'].unique())
+
+
 
