@@ -9,4 +9,4 @@ from collections import Counter
 file_path = r'SPGC-metadata-2018-07-18.csv'
 metadata = pd.read_csv(file_path)
 
-print(df.head())
+print(metadata.head())
