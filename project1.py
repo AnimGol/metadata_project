@@ -14,7 +14,7 @@ metadata = pd.read_csv(file_path)
 
 # print(metadata.head())
 
-# Extract the sixth column which is related to languages (index 5) from the metadata dataframe
+# Extract the sixth column which is related to languages (index 5) from the metadata 
 language_list = metadata.iloc[:, 5].tolist()
 
 
