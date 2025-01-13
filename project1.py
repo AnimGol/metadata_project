@@ -27,7 +27,16 @@ subjects_list = metadata.iloc[:, 7].tolist()
 
 
 #finfing inconsistency in language row
-print(metadata['language'].unique())
+# print(metadata['language'].unique())
 
+columns_to_update = [5, 7]  # Columns 6 and 8 (zero-indexed)
+missing_values = {'', 'Missing', 'Unknown', 'set()'}
+# Replace missing data in specified columns with "Unknown"
+for col in columns_to_update:
+    metadata.iloc[:, col] = metadata.iloc[:, col].replace(missing_values, 'Unknown')
+    metadata.iloc[:, col] = metadata.iloc[:, col].fillna('Unknown')  # Replace NaN with "Unknown"
+output_file_path =  r'cleaned_metadata.csv'
+metadata.to_csv(output_file_path, index=False)
+print(f"Cleaned metadata saved to: {output_file_path}")
 
 
