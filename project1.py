@@ -13,3 +13,9 @@ file_path = r'SPGC-metadata-2018-07-18.csv'
 metadata = pd.read_csv(file_path)
 
 # print(metadata.head())
+
+# Extract the sixth column which is related to languages (index 5) from the metadata dataframe
+language_list = metadata.iloc[:, 5].tolist()
+
+
+print(language_list)
