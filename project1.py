@@ -14,16 +14,7 @@ metadata = pd.read_csv(file_path)
 
 # print(metadata.head())
 
-# Extract the sixth column which is related to languages (index 5) from the metadata 
-language_list = metadata.iloc[:, 5].tolist()
 
-#print(language_list)
-
-
-# defining subject as list.
-subjects_list = metadata.iloc[:, 7].tolist()
-
-#print(subjects_list)
 
 
 #finfing inconsistency in language row
@@ -37,6 +28,17 @@ for col in columns_to_update:
     metadata.iloc[:, col] = metadata.iloc[:, col].fillna('Unknown')  # Replace NaN with "Unknown"
 output_file_path =  r'cleaned_metadata.csv'
 metadata.to_csv(output_file_path, index=False)
-print(f"Cleaned metadata saved to: {output_file_path}")
+# print(f"Cleaned metadata saved to: {output_file_path}")
+
+# Extract the sixth column which is related to languages (index 5) from the metadata 
+language_list = metadata.iloc[:, 5].tolist()
+
+#print(language_list)
+
+
+# defining subject as list.
+subjects_list = metadata.iloc[:, 7].tolist()
+
+#print(subjects_list)
 
 
