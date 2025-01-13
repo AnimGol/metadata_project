@@ -20,7 +20,7 @@ language_list = metadata.iloc[:, 5].tolist()
 #print(language_list)
 
 # defining subject as list.
-subjects_list = metadata.iloc[:, 8].tolist()
+subjects_list = metadata.iloc[:, 7].tolist()
 
 print(subjects_list)
 
