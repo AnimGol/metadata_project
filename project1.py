@@ -53,6 +53,7 @@ wordcloud = WordCloud(width=800, height=400, background_color='white', colormap=
 
 # Plot the word cloud
 plt.figure(figsize=(10, 5))
+# "bilinear" smooths the edges and makes the word cloud look better when stretched to fit the figure. Without it, the image might look pixelated or blocky
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')  # Hide the axes
 plt.title("Word Map of Subjects", fontsize=16)
