@@ -1,4 +1,4 @@
-print ("Please choose and only write the number: \n 1. Suboject Wordmap \n 2. emotion analysis")
+print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis")
 users_choice = input ()
 
 
