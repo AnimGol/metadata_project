@@ -15,9 +15,10 @@ metadata = pd.read_csv(file_path)
 
 
 
-#finfing inconsistency in language row
+#finding inconsistency in language row
 # print(metadata['language'].unique())
 
+# cleaning data and handling missing info
 columns_to_update = [5, 7]  # Columns 6 and 8 (zero-indexed)
 missing_values = {'', 'Missing', 'Unknown', 'set()'}
 # Replace missing data in specified columns with "Unknown"
@@ -30,13 +31,11 @@ metadata.to_csv(output_file_path, index=False)
 
 # Extract the sixth column which is related to languages (index 5) from the metadata 
 language_list = metadata.iloc[:, 5].tolist()
-
 #print(language_list)
 
 
-# defining subject as list.
+# Defining subject as a list.
 subjects_list = metadata.iloc[:, 7].tolist()
-
 #print(subjects_list)
 
 # Split subjects by '--' and clean them
