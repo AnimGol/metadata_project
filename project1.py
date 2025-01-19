@@ -76,6 +76,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
     file_name = f"PG{id}_counts.txt"
     full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name
     try:
+        print(f"Trying to open file: {full_path}")
         # Open and read the file
         with open(full_path, "r") as file:
             content = file.read()
