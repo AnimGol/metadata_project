@@ -95,7 +95,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                 except FileNotFoundError:
                     print(f"Emotion lexicon file '{file_path}' not found. Please check the path.")
                 return emotion_lexicon
-        result = emotion_dictionary(r'NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
+        result = emotion_dictionary(r'Lexicon.txt')
         # print (result)
 
         def analysis(full_path):
