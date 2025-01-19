@@ -72,27 +72,30 @@ if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wo
 if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
     print ("Please write the ID (e.g., 10 or 14). Please choose a number that is availavle in the folder of Counts.")
     id = input (). strip ()
-    text_folder_path = r"C:\Users\minag\OneDrive\Desktop\metadata_project\SPGC-counts-2018-07-18"
+    text_folder_path = r"SPGC-counts-2018-07-18"
     file_name = f"PG{id}_counts.txt"
     full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name
     try:
+        print(f"Trying to open file: {full_path}")
         # Open and read the file
         with open(full_path, "r") as file:
             content = file.read()
             print ('file is found and read successfully!')
 
-        def emotion_dictionary (file_path):
-            emotion_lexicon = {}
-            with open(file_path, 'r', encoding='utf-8') as file:
-                for line in file:
-                    # strip(), ensures that any unnecessary whitespace or special characters (like \n, spaces or \t at the beginning or end of strings) at the beginning or end of each line are removed, leading to more accurate data processing.
-                    word, emotion, value = line.strip().split('\t')
-                    if value == '1':
-                        if word not in emotion_lexicon:
-                            emotion_lexicon[word] = []
-                        emotion_lexicon[word].append(emotion)
-            return emotion_lexicon
-        result = emotion_dictionary(r'C:\Users\minag\OneDrive\Desktop\metadata_project\NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
+        def emotion_dictionary(file_path):
+                emotion_lexicon = {}
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        for line in file:
+                            word, emotion, value = line.strip().split('\t')
+                            if value == '1':
+                                if word not in emotion_lexicon:
+                                    emotion_lexicon[word] = []
+                                emotion_lexicon[word].append(emotion)
+                except FileNotFoundError:
+                    print(f"Emotion lexicon file '{file_path}' not found. Please check the path.")
+                return emotion_lexicon
+        result = emotion_dictionary(r'NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
         # print (result)
 
         def analysis(full_path):
