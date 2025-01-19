@@ -92,7 +92,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                             emotion_lexicon[word] = []
                         emotion_lexicon[word].append(emotion)
             return emotion_lexicon
-        result = emotion_dictionary(r'C:\Users\minag\OneDrive\Desktop\metadata_project\NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
+        result = emotion_dictionary(r'NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
         # print (result)
 
         def analysis(full_path):
