@@ -82,17 +82,19 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
             content = file.read()
             print ('file is found and read successfully!')
 
-        def emotion_dictionary (file_path):
-            emotion_lexicon = {}
-            with open(file_path, 'r', encoding='utf-8') as file:
-                for line in file:
-                    # strip(), ensures that any unnecessary whitespace or special characters (like \n, spaces or \t at the beginning or end of strings) at the beginning or end of each line are removed, leading to more accurate data processing.
-                    word, emotion, value = line.strip().split('\t')
-                    if value == '1':
-                        if word not in emotion_lexicon:
-                            emotion_lexicon[word] = []
-                        emotion_lexicon[word].append(emotion)
-            return emotion_lexicon
+        def emotion_dictionary(file_path):
+                emotion_lexicon = {}
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        for line in file:
+                            word, emotion, value = line.strip().split('\t')
+                            if value == '1':
+                                if word not in emotion_lexicon:
+                                    emotion_lexicon[word] = []
+                                emotion_lexicon[word].append(emotion)
+                except FileNotFoundError:
+                    print(f"Emotion lexicon file '{file_path}' not found. Please check the path.")
+                return emotion_lexicon
         result = emotion_dictionary(r'NRC-Emotion_Lexicon\NRC-Emotion-Lexicon\NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
         # print (result)
 
