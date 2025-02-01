@@ -172,7 +172,7 @@ print(topic_counts)
 
 
     # Display top words for each topic
-    words = vectorizer.get_feature_names_out()
+ words = vectorizer.get_feature_names_out()
     for topic_idx, topic in enumerate(lda.components_):
         print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
 
