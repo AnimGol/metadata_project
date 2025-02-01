@@ -1,4 +1,4 @@
-print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis")
+print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart")
 users_choice = input ()
 
 
@@ -73,7 +73,27 @@ cleaned_subjects = [subject for subject in cleaned_subjects if subject and subje
 # Join all subjects into a single string for Word Cloud
 subject_text = ' '.join(cleaned_subjects)
 
+# Create a subject frequency dictionary
+subject_counts = defaultdict(int)
+for subject in cleaned_subjects:
+    subject_counts[subject] += 1
 
+# Convert to DataFrame for visualization
+subject_df = pd.DataFrame(subject_counts.items(), columns=["Subject", "Frequency"])
+subject_df = subject_df.sort_values(by="Frequency", ascending=False).head(20)  # Top 20 subjects
+
+# User choice handling
+if users_choice in ["1", "1.", "subject wordmap", "wordmap"]:
+    # Create and display a word cloud
+    subject_text = ' '.join(cleaned_subjects)
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='coolwarm').generate(subject_text)
+    
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title("Word Map of Subjects", fontsize=16)
+    plt.savefig("wordcloud.png")
+    plt.show()
 
 
 if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wordmap" or users_choice == "one" or users_choice == "Subject Wordmap":
@@ -88,6 +108,21 @@ if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wo
     plt.title("Word Map of Subjects", fontsize=16)
     plt.savefig("wordcloud.png")
     plt.show()
+
+
+if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
+    # Create and display a bar chart
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
+    plt.xlabel("Frequency", fontsize=12)
+    plt.ylabel("Subjects", fontsize=12)
+    plt.title("Top 20 Most Frequent Subjects", fontsize=14)
+    plt.show()
+
+else:
+    print("Invalid choice. Please enter '1' for Wordmap or '2' for Bar Chart.")
+
+
 
 
 if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
