@@ -173,7 +173,7 @@ else:
 
 
 if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
-    print ("Please write the ID (e.g., 10 or 14). Please choose a number that is availavle in the folder of Counts.")
+    print ("Please write the ID (e.g., 10 or 26). Please choose a number that is availavle in the folder of Counts.")
     id = input (). strip ()
     text_folder_path = r"SPGC-counts-2018-07-18"
     file_name = f"PG{id}_counts.txt"
