@@ -64,7 +64,7 @@ if users_choice in ["1", "wordmap", "subject wordmap"]:
     plt.show()
 
 # ✅ Handle Subject Frequency Bar Chart (Option 3)
-elif users_choice in ["3", "bar chart", "subject frequency bar chart"]:
+if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.figure(figsize=(12, 6))
     sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
     plt.xlabel("Frequency", fontsize=12)
@@ -73,22 +73,28 @@ elif users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.show()
 
 # ✅ Handle Topic Clustering with LDA (Option 4)
-elif users_choice in ["4", "lda", "topic clustering"]:
+if users_choice in ["4", "lda", "topic clustering"]:
     # Convert subjects into a format suitable for LDA
     vectorizer = CountVectorizer(stop_words='english')
-    X = vectorizer.fit_transform(cleaned_subjects)
+
+    # Convert entire 'subjects' column into a string per book
+    metadata["processed_subjects"] = metadata["subjects"].apply(lambda x: ' '.join(x) if isinstance(x, list) else str(x))
+
+    # Fit LDA on unique books, not on separated subjects
+    X = vectorizer.fit_transform(metadata["processed_subjects"])
 
     # Apply LDA
     lda = LatentDirichletAllocation(n_components=5, random_state=42)
     topic_matrix = lda.fit_transform(X)
 
     # Assign each book to the most probable topic
-    metadata["dominant_topic"] = topic_matrix.argmax(axis=1)
+    metadata["dominant_topic"] = topic_matrix.argmax(axis=1)  # ✅ Now matches metadata row count
 
     # Count books per topic
     topic_counts = metadata["dominant_topic"].value_counts().sort_index()
     print("\n📌 Number of books per topic:")
     print(topic_counts)
+
 
     # Display top words for each topic
     words = vectorizer.get_feature_names_out()
