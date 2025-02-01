@@ -41,9 +41,39 @@ language_list = metadata.iloc[:, 5].tolist()
 #print(language_list)
 
 
-# Defining subject as a list.
-subjects_list = metadata.iloc[:, 7].tolist()
-#print(subjects_list)
+
+
+
+# Defining subjects as a list
+subjects_list = metadata.iloc[:, 7].astype(str).tolist()  # Convert to string to avoid NaN issues
+
+
+# Cleaning and spliting subjects
+cleaned_subjects = []
+for entry in subjects_list:
+    # Remove curly braces `{}` and normalize text
+    cleaned_entry = entry.strip("{}").strip().lower()
+
+    # Split by both ',' and '--' to handle different formats
+    if '--' in cleaned_entry:
+        subjects = cleaned_entry.split('--')
+    else:
+        subjects = cleaned_entry.split(',')
+
+    # Clean extra spaces and remove empty values
+    subjects = [subject.strip().strip("'") for subject in subjects if subject.strip()]
+    
+    # Add cleaned subjects to the list
+    cleaned_subjects.extend(subjects)
+
+
+# Remove unwanted values like "set()"
+cleaned_subjects = [subject for subject in cleaned_subjects if subject and subject != "set()"]
+
+# Join all subjects into a single string for Word Cloud
+subject_text = ' '.join(cleaned_subjects)
+
+
 
 # Split subjects by '--' and clean them
 split_subjects = []
@@ -52,8 +82,7 @@ for entry in subjects_list:
     parts = [part.strip() for part in parts if part.strip() != '']  # Remove extra spaces and empty strings
     split_subjects.extend(parts)
 
-# Join all subjects into a single string for the word cloud
-subject_text = ' '.join(split_subjects)
+
 
 if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wordmap" or users_choice == "one" or users_choice == "Subject Wordmap":
     # Create the word cloud
