@@ -13,7 +13,12 @@ from collections import defaultdict
 # os is used for handling the path in the emotion analysis section.
 import os
 import numpy as np
-from wordcloud import WordCloud
+try: 
+    from wordcloud import WordCloud
+except ImportError:
+    import subprocess
+    subprocess.check_call(["pip", "install", "wordcloud"])
+    from wordcloud import WordCloud
 import plotly.express as px
 from sklearn.decomposition import PCA
 
