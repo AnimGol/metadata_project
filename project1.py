@@ -112,8 +112,9 @@ if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wo
 
 if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
     # Create and display a bar chart
+        # Create and display a bar chart
     plt.figure(figsize=(12, 6))
-    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
+    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis", hue=None, legend=False)
     plt.xlabel("Frequency", fontsize=12)
     plt.ylabel("Subjects", fontsize=12)
     plt.title("Top 20 Most Frequent Subjects", fontsize=14)
