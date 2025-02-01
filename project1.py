@@ -1,50 +1,79 @@
+print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart \n 4. Topic Clustering (LDA)")
+users_choice = input ()
+
+
+
 import pandas as pd
-import numpy as np
-import os
-import subprocess
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.express as px
 from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+# Seaborn library is specifically designed for creating attractive and informative statistical graphics.
+import seaborn as sns
+# counter dictionary subclass is used for counting hashable objects (e.g., strings, numbers).
 from collections import defaultdict
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.decomposition import LatentDirichletAllocation, PCA
+# os is used for handling the path in the emotion analysis section.
+import os
 
-# Ensure required packages are installed
-try:
-    from wordcloud import WordCloud
-except ImportError:
-    subprocess.check_call(["pip", "install", "wordcloud"])
-    from wordcloud import WordCloud
-
-# Ask for user choice
-print("Please choose and only write the number: \n 1. Subject Wordmap \n 2. Emotion Analysis \n 3. Subject Frequency Bar Chart \n 4. Topic Clustering (LDA)")
-users_choice = input().strip().lower()
-
-# Load CSV file
-file_path = 'SPGC-metadata-2018-07-18.csv'
+# 'r' tells Python to treat the backslashes as literal characters.
+file_path = r'SPGC-metadata-2018-07-18.csv'
 metadata = pd.read_csv(file_path)
 
-# Clean missing values in language and subjects columns
-columns_to_update = [5, 7]  # Columns (index 5 & 7)
+# print(metadata.head())
+
+
+
+
+#finding inconsistency in language row
+# print(metadata['language'].unique())
+
+# cleaning data and handling missing info
+columns_to_update = [5, 7]  # Columns 6 and 8 (zero-indexed)
 missing_values = {'', 'Missing', 'Unknown', 'set()'}
+# Replace missing data in specified columns with "Unknown"
 for col in columns_to_update:
-    metadata.iloc[:, col] = metadata.iloc[:, col].replace(missing_values, 'Unknown').fillna('Unknown')
+    metadata.iloc[:, col] = metadata.iloc[:, col].replace(missing_values, 'Unknown')
+    metadata.iloc[:, col] = metadata.iloc[:, col].fillna('Unknown')  # Replace NaN with "Unknown"
+output_file_path =  r'cleaned_metadata.csv'
+metadata.to_csv(output_file_path, index=False)
+# print(f"Cleaned metadata saved to: {output_file_path}")
 
-# Extract and clean subjects
-subjects_list = metadata.iloc[:, 7].astype(str).tolist()
+# Extract the sixth column which is related to languages (index 5) from the metadata 
+language_list = metadata.iloc[:, 5].tolist()
+#print(language_list)
+
+
+
+
+
+# Defining subjects as a list
+subjects_list = metadata.iloc[:, 7].astype(str).tolist()  # Convert to string to avoid NaN issues
+
+
+# Cleaning and spliting subjects
 cleaned_subjects = []
-
 for entry in subjects_list:
+    # Remove curly braces `{}` and normalize text
     cleaned_entry = entry.strip("{}").strip().lower()
-    subjects = cleaned_entry.split('--') if '--' in cleaned_entry else cleaned_entry.split(',')
+
+    # Split by both ',' and '--' to handle different formats
+    if '--' in cleaned_entry:
+        subjects = cleaned_entry.split('--')
+    else:
+        subjects = cleaned_entry.split(',')
+
+    # Clean extra spaces and remove empty values
     subjects = [subject.strip().strip("'") for subject in subjects if subject.strip()]
+    
+    # Add cleaned subjects to the list
     cleaned_subjects.extend(subjects)
+
 
 # Remove unwanted values like "set()"
 cleaned_subjects = [subject for subject in cleaned_subjects if subject and subject != "set()"]
 
-# Create subject frequency dictionary
+# Join all subjects into a single string for Word Cloud
+subject_text = ' '.join(cleaned_subjects)
+
+# Create a subject frequency dictionary
 subject_counts = defaultdict(int)
 for subject in cleaned_subjects:
     subject_counts[subject] += 1
@@ -53,9 +82,12 @@ for subject in cleaned_subjects:
 subject_df = pd.DataFrame(subject_counts.items(), columns=["Subject", "Frequency"])
 subject_df = subject_df.sort_values(by="Frequency", ascending=False).head(20)  # Top 20 subjects
 
-# ✅ Handle WordMap (Option 1)
-if users_choice in ["1", "wordmap", "subject wordmap"]:
-    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='coolwarm').generate(' '.join(cleaned_subjects))
+# User choice handling
+if users_choice in ["1", "1.", "subject wordmap", "wordmap"]:
+    # Create and display a word cloud
+    subject_text = ' '.join(cleaned_subjects)
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='coolwarm').generate(subject_text)
+    
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
@@ -63,7 +95,38 @@ if users_choice in ["1", "wordmap", "subject wordmap"]:
     plt.savefig("wordcloud.png")
     plt.show()
 
-# ✅ Handle Subject Frequency Bar Chart (Option 3)
+
+if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wordmap" or users_choice == "one" or users_choice == "Subject Wordmap":
+    # Create the word cloud
+    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='viridis').generate(subject_text)
+    
+    # Plot the word cloud
+    plt.figure(figsize=(10, 5))
+    # "bilinear" smooths the edges and makes the word cloud look better when stretched to fit the figure. Without it, the image might look pixelated or blocky
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')  # Hide the axes
+    plt.title("Word Map of Subjects", fontsize=16)
+    plt.savefig("wordcloud.png")
+    plt.show()
+
+
+if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
+    # Create and display a bar chart
+        # Create and display a bar chart
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis", legend=False)
+    plt.xlabel("Frequency", fontsize=12)
+    plt.ylabel("Subjects", fontsize=12)
+    plt.title("Top 20 Most Frequent Subjects", fontsize=14)
+    plt.show()
+    plt.savefig("barplot.png")
+
+else:
+    print("Invalid choice. Please enter '1' for Wordmap or '2' for Bar Chart.")
+
+
+
+# 📌 Subject Frequency Bar Chart (Choice 3)
 if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.figure(figsize=(12, 6))
     sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
@@ -72,76 +135,35 @@ if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.title("Top 20 Most Frequent Subjects", fontsize=14)
     plt.show()
 
-# ✅ Handle Topic Clustering with LDA (Option 4)
+#  Topic Clustering with LDA (Choice 4)
 if users_choice in ["4", "lda", "topic clustering"]:
     # Convert subjects into a format suitable for LDA
     vectorizer = CountVectorizer(stop_words='english')
-
-    # Convert entire 'subjects' column into a string per book
-    metadata["processed_subjects"] = metadata["subjects"].apply(lambda x: ' '.join(x) if isinstance(x, list) else str(x))
-
-    # Fit LDA on unique books, not on separated subjects
-    X = vectorizer.fit_transform(metadata["processed_subjects"])
+    X = vectorizer.fit_transform(cleaned_subjects)
 
     # Apply LDA
     lda = LatentDirichletAllocation(n_components=5, random_state=42)
     topic_matrix = lda.fit_transform(X)
-
-    # Assign each book to the most probable topic
-    metadata["dominant_topic"] = topic_matrix.argmax(axis=1)  # ✅ Now matches metadata row count
-
-    # Count books per topic
-    topic_counts = metadata["dominant_topic"].value_counts().sort_index()
-    print("\n📌 Number of books per topic:")
-    print(topic_counts)
-
 
     # Display top words for each topic
     words = vectorizer.get_feature_names_out()
     for topic_idx, topic in enumerate(lda.components_):
         print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
 
-    # ✅ Generate WordClouds for each topic
+    # WordCloud for LDA Topics
     plt.figure(figsize=(10, 5))
     for i, topic in enumerate(lda.components_):
         topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
-        plt.subplot(1, 5, i + 1)
+        plt.subplot(1, 5, i+1)
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(f"Topic {i+1}")
-
     plt.show()
-
-    # ✅ Plot the topic distribution
-    plt.figure(figsize=(10, 5))
-    sns.barplot(x=topic_counts.index, y=topic_counts.values, palette="viridis")
-    plt.xlabel("LDA Topic")
-    plt.ylabel("Number of Books")
-    plt.title("Distribution of Books Across LDA Topics")
-    plt.show()
-
-    # ✅ Reduce topic matrix to 2D using PCA
-    pca = PCA(n_components=2)
-    X_pca = pca.fit_transform(topic_matrix)
-
-    # Create a DataFrame for visualization
-    pca_df = pd.DataFrame({
-        "x": X_pca[:, 0],
-        "y": X_pca[:, 1],
-        "Topic": metadata["dominant_topic"],
-        "Book Title": metadata["title"].fillna("Unknown")
-    })
-
-    # ✅ Generate an interactive scatter plot
-    fig = px.scatter(pca_df, x="x", y="y", color=pca_df["Topic"].astype(str),
-                     hover_data={"Book Title": True, "x": False, "y": False},
-                     title="Interactive PCA Clustering of Book Topics",
-                     labels={"Topic": "LDA Topic"})
-    fig.show()
 
 else:
-    print("❌ Invalid choice. Please enter '1' for Wordmap, '3' for Bar Chart, or '4' for LDA Topic Clustering.")
+    print("Invalid choice. Please enter '1' for Wordmap, '3' for Bar Chart, or '4' for LDA Topic Clustering.")
+
 
 
 
@@ -191,4 +213,3 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
 
     except FileNotFoundError:
         print(f"File '{full_path}' not found. Please check the ID and try again.")
-
