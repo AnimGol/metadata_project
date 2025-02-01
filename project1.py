@@ -212,7 +212,81 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
 
         
         text_result = analysis (full_path)
-        print (text_result)
+        # print (text_result)
+
+        results_folder = r"C:\Users\minag\OneDrive\Desktop\metadata_project\results"
+
+         # Ensure the directory exists
+        os.makedirs(results_folder, exist_ok=True)
+
+        # Create a dynamic filename using the selected ID
+        output_filename = f"PG{id}_counts.tsv"
+        output_path = os.path.join(results_folder, output_filename)
+        with open (output_path,'w', newline='', encoding='utf-8') as tsv_file: 
+            writer = csv.writer (tsv_file, delimiter= '\t')
+            writer.writerow(['Word', 'Count', 'Emotions'])
+            for word, values in text_result.items():
+                parts = values.split(", ", 1)  # Splitting only on the first comma
+                 # Assign values correctly
+                count = parts[0]  # First part is the count
+                emotions = parts[1] if len(parts) > 1 else ""  # Second part is emotions, if available
+
+                 # Remove extra brackets from emotions
+                emotions = emotions.strip("[]").replace("'", "")  # Cleaning up emotion formatting
+    
+                  # Write to file
+                writer.writerow([word, count, emotions])
+
+        print(f"Emotion analysis saved.")          
+
+
+        def emotion_frequency (output_path):
+            emotions_in_text = {}
+            with open (output_path) as tsv_file:
+                reader = csv.reader (tsv_file, delimiter='\t')
+                next (reader)   # Skip the header row
+                for row in reader:
+                    word, number, emotions = row
+                    separated_emotions= emotions.strip().split(',')
+                    for emotion in separated_emotions:
+                        if emotion in ['anticipation', 'joy', 'positive', 'surprise', 'trust', 'anger', 'negative', 'disgust', 'fear', 'sadness']:
+                          # Increment the count for the emotion
+                            if emotion in emotions_in_text:
+                                   emotions_in_text[emotion] += int(number)
+                            else:
+                                   emotions_in_text[emotion] = int(number)
+            return emotions_in_text
+        
+        emotion_frequency =  emotion_frequency (output_path) 
+        print (emotion_frequency)
+
+
+        emotions = list(emotion_frequency.keys())
+        values = list(emotion_frequency.values())
+        sns.set(style="whitegrid")
+        # Create a bar chart
+        plt.figure(figsize=(10, 6))  # Set the figure size
+        bars = plt.bar(emotions, values, color=sns.color_palette("Blues", n_colors=len(emotions)))
+
+        # Adding titles and labels
+        plt.title('Emotion Frequency Distribution', fontsize=18, weight='bold', family='serif')
+        plt.xlabel('Emotions', fontsize=12, weight='bold', family='serif')
+        plt.ylabel('Frequency', fontsize=12, weight='bold', family='serif')
+
+        # Rotate the x-axis labels for better visibility
+        plt.xticks(rotation=45, fontsize=12)
+
+        # Adding grid lines to make the chart more readable
+        plt.grid(axis='y', linestyle='--', alpha=0.7) 
+
+        for bar in bars:
+            yval = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2, yval + 100, round(yval, 0), ha='center', va='bottom', fontsize=10)
+
+        # Display the chart
+        plt.tight_layout()
+        plt.show()        
+
                         
 
 
