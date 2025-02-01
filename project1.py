@@ -15,6 +15,8 @@ import os
 import numpy as np
 from wordcloud import WordCloud
 import plotly.express as px
+from sklearn.decomposition import PCA
+
 
 # Importing missing modules
 from sklearn.feature_extraction.text import CountVectorizer
@@ -153,21 +155,70 @@ if users_choice in ["4", "lda", "topic clustering"]:
     lda = LatentDirichletAllocation(n_components=5, random_state=42)
     topic_matrix = lda.fit_transform(X)
 
+    # Assign each book to the most probable topic
+df["dominant_topic"] = topic_matrix.argmax(axis=1)
+
+# Count the number of books per topic
+topic_counts = df["dominant_topic"].value_counts().sort_index()
+
+# Display topic distribution
+print("\n📌 Number of books per topic:")
+print(topic_counts)
+
+
     # Display top words for each topic
     words = vectorizer.get_feature_names_out()
     for topic_idx, topic in enumerate(lda.components_):
         print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
 
-    # WordCloud for LDA Topics
+
+
+
+
+   #####
+#WordCloud for LDA Topics
+#plt.figure(figsize=(10, 5))
+#for i, topic in enumerate(lda.components_):
+  #  topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
+  #  wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
+  #  plt.subplot(1, 5, i+1)
+  #  plt.imshow(wordcloud, interpolation='bilinear')
+   #  plt.axis('off')
+   #  plt.title(f"Topic {i+1}")
+   # plt.show()
+#####
+
+
+
+    # Plot the topic distribution
     plt.figure(figsize=(10, 5))
-    for i, topic in enumerate(lda.components_):
-        topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
-        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
-        plt.subplot(1, 5, i+1)
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        plt.title(f"Topic {i+1}")
+    sns.barplot(x=topic_counts.index, y=topic_counts.values, palette="viridis")
+    plt.xlabel("LDA Topic")
+    plt.ylabel("Number of Books")
+    plt.title("Distribution of Books Across LDA Topics")
     plt.show()
+
+# Reduce topic matrix to 2D using PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(topic_matrix)
+
+# Create a DataFrame for visualization
+pca_df = pd.DataFrame({
+    "x": X_pca[:, 0],
+    "y": X_pca[:, 1],
+    "Topic": df["dominant_topic"],
+    "Book Title": df["title"].fillna("Unknown")  # Show book titles on hover
+})
+
+# Generate an interactive scatter plot
+fig = px.scatter(pca_df, x="x", y="y", color=pca_df["Topic"].astype(str),
+                 hover_data={"Book Title": True, "x": False, "y": False},
+                 title="Interactive PCA Clustering of Book Topics",
+                 labels={"Topic": "LDA Topic"})
+
+# Show interactive plot
+fig.show()
+
 
 else:
     print("Invalid choice. Please enter '1' for Wordmap, '3' for Bar Chart, or '4' for LDA Topic Clustering.")
