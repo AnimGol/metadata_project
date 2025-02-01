@@ -4,8 +4,12 @@ users_choice = input ()
 
 
 import pandas as pd
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
+try: 
+    from wordcloud import WordCloud
+except ImportError:
+    import subprocess
+    subprocess.check_call(["pip", "install", "wordcloud"])
+    from wordcloud import WordCloudimport matplotlib.pyplot as plt
 # Seaborn library is specifically designed for creating attractive and informative statistical graphics.
 import seaborn as sns
 # counter dictionary subclass is used for counting hashable objects (e.g., strings, numbers).
