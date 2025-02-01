@@ -1,4 +1,4 @@
-print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart")
+print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart \n 4. Topic Clustering (LDA)")
 users_choice = input ()
 
 
@@ -123,6 +123,46 @@ if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
 
 else:
     print("Invalid choice. Please enter '1' for Wordmap or '2' for Bar Chart.")
+
+
+
+# 📌 Subject Frequency Bar Chart (Choice 3)
+elif users_choice in ["3", "bar chart", "subject frequency bar chart"]:
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
+    plt.xlabel("Frequency", fontsize=12)
+    plt.ylabel("Subjects", fontsize=12)
+    plt.title("Top 20 Most Frequent Subjects", fontsize=14)
+    plt.show()
+
+#  Topic Clustering with LDA (Choice 4)
+if users_choice in ["4", "lda", "topic clustering"]:
+    # Convert subjects into a format suitable for LDA
+    vectorizer = CountVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(cleaned_subjects)
+
+    # Apply LDA
+    lda = LatentDirichletAllocation(n_components=5, random_state=42)
+    topic_matrix = lda.fit_transform(X)
+
+    # Display top words for each topic
+    words = vectorizer.get_feature_names_out()
+    for topic_idx, topic in enumerate(lda.components_):
+        print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
+
+    # WordCloud for LDA Topics
+    plt.figure(figsize=(10, 5))
+    for i, topic in enumerate(lda.components_):
+        topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
+        wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
+        plt.subplot(1, 5, i+1)
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plt.title(f"Topic {i+1}")
+    plt.show()
+
+else:
+    print("Invalid choice. Please enter '1' for Wordmap, '3' for Bar Chart, or '4' for LDA Topic Clustering.")
 
 
 
