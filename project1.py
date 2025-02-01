@@ -127,7 +127,7 @@ else:
 
 
 # 📌 Subject Frequency Bar Chart (Choice 3)
-elif users_choice in ["3", "bar chart", "subject frequency bar chart"]:
+if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.figure(figsize=(12, 6))
     sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
     plt.xlabel("Frequency", fontsize=12)
