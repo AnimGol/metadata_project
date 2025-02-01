@@ -119,6 +119,7 @@ if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
     plt.ylabel("Subjects", fontsize=12)
     plt.title("Top 20 Most Frequent Subjects", fontsize=14)
     plt.show()
+    plt.savefig("barplot.png")
 
 else:
     print("Invalid choice. Please enter '1' for Wordmap or '2' for Bar Chart.")
