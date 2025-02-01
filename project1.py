@@ -12,6 +12,14 @@ import seaborn as sns
 from collections import defaultdict
 # os is used for handling the path in the emotion analysis section.
 import os
+import numpy as np
+from wordcloud import WordCloud
+import plotly.express as px
+
+# Importing missing modules
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.decomposition import LatentDirichletAllocation, PCA
+from sklearn.manifold import TSNE
 
 # 'r' tells Python to treat the backslashes as literal characters.
 file_path = r'SPGC-metadata-2018-07-18.csv'
