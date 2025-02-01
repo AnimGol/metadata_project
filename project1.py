@@ -75,14 +75,6 @@ subject_text = ' '.join(cleaned_subjects)
 
 
 
-# Split subjects by '--' and clean them
-split_subjects = []
-for entry in subjects_list:
-    parts = entry.split('--')  # Split by '--'
-    parts = [part.strip() for part in parts if part.strip() != '']  # Remove extra spaces and empty strings
-    split_subjects.extend(parts)
-
-
 
 if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wordmap" or users_choice == "one" or users_choice == "Subject Wordmap":
     # Create the word cloud
