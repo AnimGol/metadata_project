@@ -1,4 +1,4 @@
-print ("Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart \n 4. Topic Clustering (LDA)")
+print ("Welcome. Please choose and only write the number: \n 1. Subject Wordmap \n 2. emotion analysis \n 3. Subject Frequency Bar Chart \n 4. Topic Clustering (LDA)")
 users_choice = input ()
 
 
@@ -100,20 +100,9 @@ if users_choice in ["1", "1.", "subject wordmap", "wordmap"]:
     plt.title("Word Map of Subjects", fontsize=16)
     plt.savefig("wordcloud.png")
     plt.show()
+    print ('wordcloud file is ready!')
 
 
-if users_choice == "1" or users_choice == "1." or users_choice == "1. Subject Wordmap" or users_choice == "one" or users_choice == "Subject Wordmap":
-    # Create the word cloud
-    wordcloud = WordCloud(width=800, height=400, background_color='white', colormap='viridis').generate(subject_text)
-    
-    # Plot the word cloud
-    plt.figure(figsize=(10, 5))
-    # "bilinear" smooths the edges and makes the word cloud look better when stretched to fit the figure. Without it, the image might look pixelated or blocky
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')  # Hide the axes
-    plt.title("Word Map of Subjects", fontsize=16)
-    plt.savefig("wordcloud.png")
-    plt.show()
 
 
 if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
