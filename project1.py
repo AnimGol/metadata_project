@@ -116,8 +116,6 @@ if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
     plt.show()
     plt.savefig("barplot.png")
 
-else:
-    print("Invalid choice. Please enter '1' for Wordmap or '2' for Bar Chart.")
 
 
 
@@ -156,8 +154,7 @@ if users_choice in ["4", "lda", "topic clustering"]:
         plt.title(f"Topic {i+1}")
     plt.show()
 
-else:
-    print("Invalid choice. Please enter '1' for Wordmap, '3' for Bar Chart, or '4' for LDA Topic Clustering.")
+
 
 
 
@@ -275,7 +272,8 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
         # Display the chart
         plt.tight_layout()
         # plt.show()        
-        plt.savefig(f"barchart{id}.png")      
+        plt.savefig(f"barchart{id}.png")  
+        print ('The barchart is saved.')
 
                         
 
