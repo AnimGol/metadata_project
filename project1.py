@@ -17,6 +17,7 @@ import seaborn as sns
 from collections import defaultdict
 # os is used for handling the path in the emotion analysis section.
 import os
+import csv
 
 # 'r' tells Python to treat the backslashes as literal characters.
 file_path = r'SPGC-metadata-2018-07-18.csv'
@@ -179,7 +180,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
     file_name = f"PG{id}_counts.txt"
     full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name
     try:
-        print(f"Trying to open file: {full_path}")
+        # print(f"Trying to open file: {full_path}")
         # Open and read the file
         with open(full_path, "r") as file:
             content = file.read()
@@ -220,9 +221,8 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
         os.makedirs(results_folder, exist_ok=True)
 
         # Create a dynamic filename using the selected ID
-        output_filename = f"PG{id}_counts.tsv"
-        output_path = os.path.join(results_folder, output_filename)
-        with open (output_path,'w', newline='', encoding='utf-8') as tsv_file: 
+        output_filename = f"PG{id}_results.tsv"
+        with open (output_filename,'w', newline='', encoding='utf-8') as tsv_file: 
             writer = csv.writer (tsv_file, delimiter= '\t')
             writer.writerow(['Word', 'Count', 'Emotions'])
             for word, values in text_result.items():
@@ -257,7 +257,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                                    emotions_in_text[emotion] = int(number)
             return emotions_in_text
         
-        emotion_frequency =  emotion_frequency (output_path) 
+        emotion_frequency =  emotion_frequency (output_filename) 
         print (emotion_frequency)
 
 
@@ -285,7 +285,8 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
 
         # Display the chart
         plt.tight_layout()
-        plt.show()        
+        # plt.show()        
+        plt.savefig(f"barchart{id}.png")      
 
                         
 
