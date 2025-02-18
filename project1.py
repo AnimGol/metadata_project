@@ -140,10 +140,9 @@ if users_choice in ["4", "lda", "topic clustering"]:
     X = vectorizer.fit_transform(subject_corpus)
 
     # Apply LDA
-    num_topics = 5  # the number is changable & I should read more, like elbow method, etc.
+    num_topics = 5 # The number is changeable & I should read more, like elbow method, or based on Perplexity Score, etc.
     lda = LatentDirichletAllocation(n_components=5, random_state=42)
-    topic_matrix = lda.fit_transform(X)
-    lda.fit(X)
+    topic_matrix = lda.fit_transform(X) #trains model & transforms the data
 
     # Get feature names
     words = vectorizer.get_feature_names_out()
@@ -154,14 +153,33 @@ if users_choice in ["4", "lda", "topic clustering"]:
         print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
 
     # WordCloud for LDA Topics
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(12, 6))
     for i, topic in enumerate(lda.components_):
         topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
-        plt.subplot(1, 5, i+1)
+        
+        plt.subplot(1, num_topics, i+1)
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(f"Topic {i+1}")
+    plt.tight_layout()  # Fix layout issues
+    plt.show()
+
+    # using preplexity score to find the best number
+    perplexities = []
+    topic_range = range(2, 10)  # Testing from 2 to 9 topics
+
+    for num in topic_range:
+        lda = LatentDirichletAllocation(n_components=num, random_state=42)
+        lda.fit(X)
+        perplexities.append(lda.perplexity(X))
+
+    # Plot Perplexity Score
+    plt.figure(figsize=(8, 4))
+    plt.plot(topic_range, perplexities, marker='o', linestyle='--')
+    plt.xlabel('Number of Topics')
+    plt.ylabel('Perplexity Score')
+    plt.title('Finding the Best Number of Topics')
     plt.show()
 
 
