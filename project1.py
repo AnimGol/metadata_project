@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 # counter dictionary subclass is used for counting hashable objects (e.g., strings, numbers).
 from collections import defaultdict
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
 # os is used for handling the path in the emotion analysis section.
 import os
 import csv
