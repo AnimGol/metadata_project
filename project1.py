@@ -180,7 +180,9 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.xlabel('Number of Topics')
     plt.ylabel('Perplexity Score')
     plt.title('Finding the Best Number of Topics')
+    plt.savefig("perplexity_score.png")
     plt.show()
+    print("Perplexity Score plot saved as 'perplexity_score.png'")
 
     # Improving meaningfulness of clusters by more descriptive visualization of them
     # Labeling each cluster based on its themes
@@ -200,13 +202,16 @@ if users_choice in ["4", "lda", "topic clustering"]:
     topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
 
     # Plot heatmap
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 6))
     sns.heatmap(topic_word_matrix.iloc[:, :20], cmap="coolwarm", annot=False, xticklabels=True)
     plt.xlabel("Words")
     plt.ylabel("Topics")
     plt.title("Topic-Word Distribution")
+    plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
 plt.show()
-plt.savefig("LDA.png")
+print("✅ LDA heatmap saved as 'LDA_heatmap.png'")
+
+
 
     # Assign each book to a topic
 book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
@@ -216,7 +221,24 @@ metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
 import ace_tools as tools
 tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
 
+# Save Word Clouds for Each Topic
+plt.figure(figsize=(12, 6))
+for i, topic in enumerate(lda.components_):
+    topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
+    
+    plt.subplot(1, num_topics, i+1)
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title(f"Topic {i+1}")
 
+plt.tight_layout()
+plt.savefig("LDA_wordclouds.png")  # ✅ Save BEFORE plt.show()
+plt.show()
+print("✅ Word clouds saved as 'LDA_wordclouds.png'")
+
+# Confirm where the files are saved
+print("Current working directory:", os.getcwd())
 
 
 if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
