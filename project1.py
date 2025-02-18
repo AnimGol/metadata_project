@@ -186,17 +186,17 @@ print("Perplexity Score plot saved as 'perplexity_score.png'")
 
     # Improving meaningfulness of clusters by more descriptive visualization of them
     # Labeling each cluster based on its themes
-    topic_labels = [
-        "19th-Century Science and Drama: English and French Literary Fiction",
-        "Historical and Juvenile Fiction Across [American] Nations",
-        "Cultural & Social Criticism [American Context]",
-        "Classic British Literature & Biographies",
-        "Christian & War-Time Fiction [European Context]"
-    ]
+topic_labels = [
+    "19th-Century Science and Drama: English and French Literary Fiction",
+    "Historical and Juvenile Fiction Across [American] Nations",
+    "Cultural & Social Criticism [American Context]",
+    "Classic British Literature & Biographies",
+    "Christian & War-Time Fiction [European Context]"
+]
 
-    for topic_idx, topic in enumerate(lda.components_):
-print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
-print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
+for topic_idx, topic in enumerate(lda.components_):
+    print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
+    print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
 
     # Create DataFrame of topic-word weights
     topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
