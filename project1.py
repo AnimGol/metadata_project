@@ -180,9 +180,9 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.xlabel('Number of Topics')
     plt.ylabel('Perplexity Score')
     plt.title('Finding the Best Number of Topics')
-    plt.savefig("perplexity_score.png")
-    plt.show()
-    print("Perplexity Score plot saved as 'perplexity_score.png'")
+plt.savefig("perplexity_score.png")
+plt.show()
+print("Perplexity Score plot saved as 'perplexity_score.png'")
 
     # Improving meaningfulness of clusters by more descriptive visualization of them
     # Labeling each cluster based on its themes
@@ -195,8 +195,8 @@ if users_choice in ["4", "lda", "topic clustering"]:
     ]
 
     for topic_idx, topic in enumerate(lda.components_):
-        print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
-        print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
+print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
+print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
 
     # Create DataFrame of topic-word weights
     topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
@@ -207,7 +207,7 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.xlabel("Words")
     plt.ylabel("Topics")
     plt.title("Topic-Word Distribution")
-    plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
+plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
 plt.show()
 print("✅ LDA heatmap saved as 'LDA_heatmap.png'")
 
