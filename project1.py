@@ -206,15 +206,15 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.ylabel("Topics")
     plt.title("Topic-Word Distribution")
 plt.show()
- plt.savefig("LDA.png")
+plt.savefig("LDA.png")
 
     # Assign each book to a topic
-    book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
-    metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
+book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
+metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
 
     # Show a sample of results
-    import ace_tools as tools
-    tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
+import ace_tools as tools
+tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
 
 
 
