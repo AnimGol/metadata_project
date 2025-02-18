@@ -205,7 +205,8 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.xlabel("Words")
     plt.ylabel("Topics")
     plt.title("Topic-Word Distribution")
-    plt.show()
+plt.show()
+ plt.savefig("LDA.png")
 
     # Assign each book to a topic
     book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
