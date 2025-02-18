@@ -86,6 +86,9 @@ subject_counts = defaultdict(int)
 for subject in cleaned_subjects:
     subject_counts[subject] += 1
 
+# Convert to a format suitable for LDA
+subject_corpus = [" ".join(subject.split()) for subject in cleaned_subjects]
+
 # Convert to DataFrame for visualization
 subject_df = pd.DataFrame(subject_counts.items(), columns=["Subject", "Frequency"])
 subject_df = subject_df.sort_values(by="Frequency", ascending=False).head(20)  # Top 20 subjects
@@ -134,12 +137,17 @@ if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
 if users_choice in ["4", "lda", "topic clustering"]:
     # Convert subjects into a format suitable for LDA
     vectorizer = CountVectorizer(stop_words='english')
-    X = vectorizer.fit_transform(cleaned_subjects)
+    X = vectorizer.fit_transform(subject_corpus)
 
     # Apply LDA
+    num_topics = 5  # the number is changable & I should read more, like elbow method, etc.
     lda = LatentDirichletAllocation(n_components=5, random_state=42)
     topic_matrix = lda.fit_transform(X)
+    lda.fit(X)
 
+    # Get feature names
+    words = vectorizer.get_feature_names_out()
+    
     # Display top words for each topic
     words = vectorizer.get_feature_names_out()
     for topic_idx, topic in enumerate(lda.components_):
