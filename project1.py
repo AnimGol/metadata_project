@@ -182,7 +182,38 @@ if users_choice in ["4", "lda", "topic clustering"]:
     plt.title('Finding the Best Number of Topics')
     plt.show()
 
+    # Improving meaningfulness of clusters by more descriptive visualization of them
+    # Labeling each cluster based on its themes
+    topic_labels = [
+        "19th-Century Science and Drama: English and French Literary Fiction",
+        "Historical and Juvenile Fiction Across [American] Nations",
+        "Cultural & Social Criticism [American Context]",
+        "Classic British Literature & Biographies",
+        "Christian & War-Time Fiction [European Context]"
+    ]
 
+    for topic_idx, topic in enumerate(lda.components_):
+        print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
+        print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
+
+    # Create DataFrame of topic-word weights
+    topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
+
+    # Plot heatmap
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(topic_word_matrix.iloc[:, :20], cmap="coolwarm", annot=False, xticklabels=True)
+    plt.xlabel("Words")
+    plt.ylabel("Topics")
+    plt.title("Topic-Word Distribution")
+    plt.show()
+
+    # Assign each book to a topic
+    book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
+    metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
+
+    # Show a sample of results
+    import ace_tools as tools
+    tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
 
 
 
