@@ -2,12 +2,11 @@ print ("Welcome. Please choose and only write the number: \n 1. Subject Wordmap 
 users_choice = input ()
 
 
-
+import subprocess
 import pandas as pd
 try: 
     from wordcloud import WordCloud
 except ImportError:
-    import subprocess
     subprocess.check_call(["pip", "install", "wordcloud"])
     from wordcloud import WordCloud
 import matplotlib.pyplot as plt
@@ -133,6 +132,7 @@ if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.title("Top 20 Most Frequent Subjects", fontsize=14)
     plt.show()
 
+lda = None
 #  Topic Clustering with LDA (Choice 4)
 if users_choice in ["4", "lda", "topic clustering"]:
     # Convert subjects into a format suitable for LDA
