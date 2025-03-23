@@ -166,24 +166,24 @@ if users_choice in ["4", "Topic Clustering", "four"]:
         plt.tight_layout()  # Fix layout issues
         plt.show()
 
-        # using preplexity score to find the best number
-        perplexities = []
-        topic_range = range(2, 10)  # Testing from 2 to 9 topics
+    #     # using preplexity score to find the best number
+    #     perplexities = []
+    #     topic_range = range(2, 10)  # Testing from 2 to 9 topics
 
-        for num in topic_range:
-            lda = LatentDirichletAllocation(n_components=num, random_state=42)
-            lda.fit(X)
-            perplexities.append(lda.perplexity(X))
+    #     for num in topic_range:
+    #         lda = LatentDirichletAllocation(n_components=num, random_state=42)
+    #         lda.fit(X)
+    #         perplexities.append(lda.perplexity(X))
 
-        # Plot Perplexity Score
-        plt.figure(figsize=(8, 4))
-        plt.plot(topic_range, perplexities, marker='o', linestyle='--')
-        plt.xlabel('Number of Topics')
-        plt.ylabel('Perplexity Score')
-        plt.title('Finding the Best Number of Topics')
-    plt.savefig("perplexity_score.png")
-    plt.show()
-    print("Perplexity Score plot saved as 'perplexity_score.png'")
+    #     # Plot Perplexity Score
+    #     plt.figure(figsize=(8, 4))
+    #     plt.plot(topic_range, perplexities, marker='o', linestyle='--')
+    #     plt.xlabel('Number of Topics')
+    #     plt.ylabel('Perplexity Score')
+    #     plt.title('Finding the Best Number of Topics')
+    # plt.savefig("perplexity_score.png")
+    # plt.show()
+    # print("Perplexity Score plot saved as 'perplexity_score.png'")
 
         # Improving meaningfulness of clusters by more descriptive visualization of them
         # Labeling each cluster based on its themes
@@ -203,11 +203,14 @@ if users_choice in ["4", "Topic Clustering", "four"]:
         topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
 
         # Plot heatmap
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(30, 18))
         sns.heatmap(topic_word_matrix.iloc[:, :20], cmap="coolwarm", annot=False, xticklabels=True)
         plt.xlabel("Words")
         plt.ylabel("Topics")
+        plt.yticks(rotation=45)
+        plt.tick_params(axis='y', labelsize=10)  # Reduce font size for y-axis labels
         plt.title("Topic-Word Distribution")
+        plt.tight_layout()  # Adjust layout to prevent label cutoff
     plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
     plt.show()
     print("✅ LDA heatmap saved as 'LDA_heatmap.png'")
@@ -219,8 +222,8 @@ if users_choice in ["4", "Topic Clustering", "four"]:
     metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
 
         # Show a sample of results
-    import ace_tools as tools
-    tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
+    print("Books with Assigned Topics:")
+    print(metadata[["title", "Dominant Topic"]].head(20))
 
     # Save Word Clouds for Each Topic
     plt.figure(figsize=(12, 6))
