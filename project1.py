@@ -132,27 +132,97 @@ if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
     plt.title("Top 20 Most Frequent Subjects", fontsize=14)
     plt.show()
 
-lda = None
-#  Topic Clustering with LDA (Choice 4)
-if users_choice in ["4", "lda", "topic clustering"]:
-    # Convert subjects into a format suitable for LDA
-    vectorizer = CountVectorizer(stop_words='english')
-    X = vectorizer.fit_transform(subject_corpus)
+if users_choice in ["4", "Topic Clustering", "four"]:
+    lda = None
+    #  Topic Clustering with LDA (Choice 4)
+    if users_choice in ["4", "lda", "topic clustering"]:
+        # Convert subjects into a format suitable for LDA
+        vectorizer = CountVectorizer(stop_words='english')
+        X = vectorizer.fit_transform(subject_corpus)
 
-    # Apply LDA
-    num_topics = 5 # The number is changeable & I should read more, like elbow method, or based on Perplexity Score, etc.
-    lda = LatentDirichletAllocation(n_components=5, random_state=42)
-    topic_matrix = lda.fit_transform(X) #trains model & transforms the data
+        # Apply LDA
+        num_topics = 5 # The number is changeable & I should read more, like elbow method, or based on Perplexity Score, etc.
+        lda = LatentDirichletAllocation(n_components=5, random_state=42)
+        topic_matrix = lda.fit_transform(X) #trains model & transforms the data
 
-    # Get feature names
-    words = vectorizer.get_feature_names_out()
-    
-    # Display top words for each topic
-    words = vectorizer.get_feature_names_out()
+        # Get feature names
+        words = vectorizer.get_feature_names_out()
+        
+        # Display top words for each topic
+        words = vectorizer.get_feature_names_out()
+        for topic_idx, topic in enumerate(lda.components_):
+            print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
+
+        # WordCloud for LDA Topics
+        plt.figure(figsize=(12, 6))
+        for i, topic in enumerate(lda.components_):
+            topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
+            wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
+            
+            plt.subplot(1, num_topics, i+1)
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            plt.title(f"Topic {i+1}")
+        plt.tight_layout()  # Fix layout issues
+        plt.show()
+
+        # using preplexity score to find the best number
+        perplexities = []
+        topic_range = range(2, 10)  # Testing from 2 to 9 topics
+
+        for num in topic_range:
+            lda = LatentDirichletAllocation(n_components=num, random_state=42)
+            lda.fit(X)
+            perplexities.append(lda.perplexity(X))
+
+        # Plot Perplexity Score
+        plt.figure(figsize=(8, 4))
+        plt.plot(topic_range, perplexities, marker='o', linestyle='--')
+        plt.xlabel('Number of Topics')
+        plt.ylabel('Perplexity Score')
+        plt.title('Finding the Best Number of Topics')
+    plt.savefig("perplexity_score.png")
+    plt.show()
+    print("Perplexity Score plot saved as 'perplexity_score.png'")
+
+        # Improving meaningfulness of clusters by more descriptive visualization of them
+        # Labeling each cluster based on its themes
+    topic_labels = [
+        "19th-Century Science and Drama: English and French Literary Fiction",
+        "Historical and Juvenile Fiction Across [American] Nations",
+        "Cultural & Social Criticism [American Context]",
+        "Classic British Literature & Biographies",
+        "Christian & War-Time Fiction [European Context]"
+    ]
+
     for topic_idx, topic in enumerate(lda.components_):
-        print(f"\nTopic {topic_idx + 1}: ", [words[i] for i in topic.argsort()[-10:]])
+        print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
+        print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
 
-    # WordCloud for LDA Topics
+        # Create DataFrame of topic-word weights
+        topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
+
+        # Plot heatmap
+        plt.figure(figsize=(12, 6))
+        sns.heatmap(topic_word_matrix.iloc[:, :20], cmap="coolwarm", annot=False, xticklabels=True)
+        plt.xlabel("Words")
+        plt.ylabel("Topics")
+        plt.title("Topic-Word Distribution")
+    plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
+    plt.show()
+    print("✅ LDA heatmap saved as 'LDA_heatmap.png'")
+
+
+
+        # Assign each book to a topic
+    book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
+    metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
+
+        # Show a sample of results
+    import ace_tools as tools
+    tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
+
+    # Save Word Clouds for Each Topic
     plt.figure(figsize=(12, 6))
     for i, topic in enumerate(lda.components_):
         topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
@@ -162,83 +232,14 @@ if users_choice in ["4", "lda", "topic clustering"]:
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
         plt.title(f"Topic {i+1}")
-    plt.tight_layout()  # Fix layout issues
+
+    plt.tight_layout()
+    plt.savefig("LDA_wordclouds.png")  # ✅ Save BEFORE plt.show()
     plt.show()
+    print("✅ Word clouds saved as 'LDA_wordclouds.png'")
 
-    # using preplexity score to find the best number
-    perplexities = []
-    topic_range = range(2, 10)  # Testing from 2 to 9 topics
-
-    for num in topic_range:
-        lda = LatentDirichletAllocation(n_components=num, random_state=42)
-        lda.fit(X)
-        perplexities.append(lda.perplexity(X))
-
-    # Plot Perplexity Score
-    plt.figure(figsize=(8, 4))
-    plt.plot(topic_range, perplexities, marker='o', linestyle='--')
-    plt.xlabel('Number of Topics')
-    plt.ylabel('Perplexity Score')
-    plt.title('Finding the Best Number of Topics')
-plt.savefig("perplexity_score.png")
-plt.show()
-print("Perplexity Score plot saved as 'perplexity_score.png'")
-
-    # Improving meaningfulness of clusters by more descriptive visualization of them
-    # Labeling each cluster based on its themes
-topic_labels = [
-    "19th-Century Science and Drama: English and French Literary Fiction",
-    "Historical and Juvenile Fiction Across [American] Nations",
-    "Cultural & Social Criticism [American Context]",
-    "Classic British Literature & Biographies",
-    "Christian & War-Time Fiction [European Context]"
-]
-
-for topic_idx, topic in enumerate(lda.components_):
-    print(f"\n📖 Topic {topic_idx + 1} - {topic_labels[topic_idx]}:")
-    print(" 🔹 ", [words[i] for i in topic.argsort()[-10:]])
-
-    # Create DataFrame of topic-word weights
-    topic_word_matrix = pd.DataFrame(lda.components_, index=topic_labels, columns=words)
-
-    # Plot heatmap
-    plt.figure(figsize=(12, 6))
-    sns.heatmap(topic_word_matrix.iloc[:, :20], cmap="coolwarm", annot=False, xticklabels=True)
-    plt.xlabel("Words")
-    plt.ylabel("Topics")
-    plt.title("Topic-Word Distribution")
-plt.savefig("LDA_heatmap.png")  # ✅ Save plot BEFORE plt.show()
-plt.show()
-print("✅ LDA heatmap saved as 'LDA_heatmap.png'")
-
-
-
-    # Assign each book to a topic
-book_topic_matrix = pd.DataFrame(topic_matrix, columns=topic_labels)
-metadata["Dominant Topic"] = book_topic_matrix.idxmax(axis=1)
-
-    # Show a sample of results
-import ace_tools as tools
-tools.display_dataframe_to_user(name="Books with Assigned Topics", dataframe=metadata[["title", "Dominant Topic"]].head(20))
-
-# Save Word Clouds for Each Topic
-plt.figure(figsize=(12, 6))
-for i, topic in enumerate(lda.components_):
-    topic_words = {words[j]: topic[j] for j in topic.argsort()[-15:]}
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(topic_words)
-    
-    plt.subplot(1, num_topics, i+1)
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    plt.title(f"Topic {i+1}")
-
-plt.tight_layout()
-plt.savefig("LDA_wordclouds.png")  # ✅ Save BEFORE plt.show()
-plt.show()
-print("✅ Word clouds saved as 'LDA_wordclouds.png'")
-
-# Confirm where the files are saved
-print("Current working directory:", os.getcwd())
+    # Confirm where the files are saved
+    print("Current working directory:", os.getcwd())
 
 
 if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
