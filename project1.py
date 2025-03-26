@@ -265,20 +265,23 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
         doc = nlp(word)
         return doc[0].lemma_ if doc else word  # Ensure it returns the original word if empty
 
-    def perform_text_analysis(id, CLI: bool):
-        if CLI:
-            print ("Please write the ID (e.g., 10 or 14). Please choose a number that is available in the folder of Counts.")
-            id = input (). strip ()
+    def perform_text_analysis():
+    
+        print ("Please write the ID (e.g., 10 or 14). Please choose a number that is available in the folder of Counts.")
+        
+        id = input (). strip ()
 
         text_folder_path = "SPGC-counts-2018-07-18"
         file_name = f"PG{id}_counts.txt"
         full_path = os.path.join(text_folder_path, file_name)
 
-        # Check if file exists
-        if not os.path.exists(full_path):
-            print(f"File {file_name} not found!")
-        else:
-            print("File found! Processing...")
+        try:
+            with open(full_path, "r") as file:
+                content = file.read()
+                print ('file is found and read successfully!')
+        except FileNotFoundError:
+            print(f"File '{full_path}' not found. Please check the ID and try again.")
+
 
             # Read the file into a DataFrame, skipping the first row (header)
             df = pd.read_csv(full_path, sep="\t", names=["word", "count"], engine="python", header=None, skiprows=1)
@@ -295,21 +298,15 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
 
             print(f"Lemmatized file saved as {output_file}")
 
-        # print ("Please write the ID (e.g., 10 or 14). Please choose a number that is availavle in the folder of Counts.")
 
         text_folder_path = r"SPGC-counts-2018-07-18"
         file_name = f"PG{id}_counts_lemmatized.txt" # Use the lemmatized file name
         full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name
 
+    perform_text_analysis()
+        
 
-    try:
-        # print(f"Trying to open file: {full_path}")
-        # Open and read the file
-        with open(full_path, "r") as file:
-            content = file.read()
-            print ('file is found and read successfully!')
-
-        def emotion_dictionary(file_path):
+    def emotion_dictionary(file_path):
                 emotion_lexicon = {}
                 try:
                     with open(file_path, 'r', encoding='utf-8') as file:
@@ -322,10 +319,10 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                 except FileNotFoundError:
                     print(f"Emotion lexicon file '{file_path}' not found. Please check the path.")
                 return emotion_lexicon
-        result = emotion_dictionary(r'Lexicon.txt')
+    result = emotion_dictionary(r'Lexicon.txt')
         # print (result)
 
-        def analysis(full_path):
+    def analysis(full_path):
             second_lexicon = {}
             with open(full_path, 'r', encoding='utf-8') as file:
                 for line in file:
@@ -334,18 +331,17 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                     second_lexicon[word] = f"{count}, {emotions}"  # Store count and emotions as a string
             return second_lexicon
 
-        
-        text_result = analysis (full_path)
+    text_folder_path = r"SPGC-counts-2018-07-18"
+    file_name = f"PG{id}_counts_lemmatized.txt" # Use the lemmatized file name
+    full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name   
+    text_result = analysis (full_path)
         # print (text_result)
 
-        results_folder = r"C:\Users\minag\OneDrive\Desktop\metadata_project\results"
-
-         # Ensure the directory exists
-        os.makedirs(results_folder, exist_ok=True)
+    
 
         # Create a dynamic filename using the selected ID
-        output_filename = f"PG{id}_results.tsv"
-        with open (output_filename,'w', newline='', encoding='utf-8') as tsv_file: 
+    output_filename = f"PG{id}_results.tsv"
+    with open (output_filename,'w', newline='', encoding='utf-8') as tsv_file: 
             writer = csv.writer (tsv_file, delimiter= '\t')
             writer.writerow(['Word', 'Count', 'Emotions'])
             for word, values in text_result.items():
@@ -360,10 +356,10 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                   # Write to file
                 writer.writerow([word, count, emotions])
 
-        print(f"Emotion analysis saved.")          
+    print(f"Emotion analysis saved.")          
 
 
-        def emotion_frequency (output_path):
+    def emotion_frequency (output_path):
             emotions_in_text = {}
             with open (output_path) as tsv_file:
                 reader = csv.reader (tsv_file, delimiter='\t')
@@ -380,40 +376,39 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
                                    emotions_in_text[emotion] = int(number)
             return emotions_in_text
         
-        emotion_frequency =  emotion_frequency (output_filename) 
-        print (emotion_frequency)
+    emotion_frequency =  emotion_frequency (output_filename) 
+    print (emotion_frequency)
 
 
-        emotions = list(emotion_frequency.keys())
-        values = list(emotion_frequency.values())
-        sns.set(style="whitegrid")
+    emotions = list(emotion_frequency.keys())
+    values = list(emotion_frequency.values())
+    sns.set(style="whitegrid")
         # Create a bar chart
-        plt.figure(figsize=(10, 6))  # Set the figure size
-        bars = plt.bar(emotions, values, color=sns.color_palette("Blues", n_colors=len(emotions)))
+    plt.figure(figsize=(10, 6))  # Set the figure size
+    bars = plt.bar(emotions, values, color=sns.color_palette("Blues", n_colors=len(emotions)))
 
         # Adding titles and labels
-        plt.title('Emotion Frequency Distribution', fontsize=18, weight='bold', family='serif')
-        plt.xlabel('Emotions', fontsize=12, weight='bold', family='serif')
-        plt.ylabel('Frequency', fontsize=12, weight='bold', family='serif')
+    plt.title('Emotion Frequency Distribution', fontsize=18, weight='bold', family='serif')
+    plt.xlabel('Emotions', fontsize=12, weight='bold', family='serif')
+    plt.ylabel('Frequency', fontsize=12, weight='bold', family='serif')
 
         # Rotate the x-axis labels for better visibility
-        plt.xticks(rotation=45, fontsize=12)
+    plt.xticks(rotation=45, fontsize=12)
 
         # Adding grid lines to make the chart more readable
-        plt.grid(axis='y', linestyle='--', alpha=0.7) 
+    plt.grid(axis='y', linestyle='--', alpha=0.7) 
 
-        for bar in bars:
+    for bar in bars:
             yval = bar.get_height()
             plt.text(bar.get_x() + bar.get_width()/2, yval + 100, round(yval, 0), ha='center', va='bottom', fontsize=10)
 
         # Display the chart
-        plt.tight_layout()
+    plt.tight_layout()
         # plt.show()        
-        plt.savefig(f"barchart{id}.png")  
-        print ('The barchart is saved.')
+    plt.savefig(f"barchart{id}.png")  
+    print ('The barchart is saved.')
 
                         
 
 
-    except FileNotFoundError:
-        print(f"File '{full_path}' not found. Please check the ID and try again.")
+   
