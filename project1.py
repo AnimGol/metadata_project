@@ -334,7 +334,7 @@ if users_choice in ["2", "2.", "emotion analysis"]:
     
 
         # Create a dynamic filename using the selected ID
-    output_filename = f"PG{id}_results.tsv"
+    output_filename = f"PG{file_id}_results.tsv"
     with open (output_filename,'w', newline='', encoding='utf-8') as tsv_file: 
             writer = csv.writer (tsv_file, delimiter= '\t')
             writer.writerow(['Word', 'Count', 'Emotions'])
