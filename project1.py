@@ -259,51 +259,45 @@ if users_choice in ["4", "Topic Clustering", "four"]:
     print("Current working directory:", os.getcwd())
 
 
-if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]:
-    # Function to lemmatize a word
+if users_choice in ["2", "2.", "emotion analysis"]:
     def lemmatize_word(word):
         doc = nlp(word)
-        return doc[0].lemma_ if doc else word  # Ensure it returns the original word if empty
+        return doc[0].lemma_ if doc else word
 
     def perform_text_analysis():
-    
-        print ("Please write the ID (e.g., 10 or 14). Please choose a number that is available in the folder of Counts.")
+        print("Please write the ID (e.g., 10 or 14). Please choose a number that is available in the folder of Counts.")
+        file_id = input().strip()
         
-        id = input (). strip ()
-
         text_folder_path = "SPGC-counts-2018-07-18"
-        file_name = f"PG{id}_counts.txt"
+        file_name = f"PG{file_id}_counts.txt"
         full_path = os.path.join(text_folder_path, file_name)
 
         try:
-            with open(full_path, "r") as file:
-                content = file.read()
-                print ('file is found and read successfully!')
-        except FileNotFoundError:
-            print(f"File '{full_path}' not found. Please check the ID and try again.")
-
-
-            # Read the file into a DataFrame, skipping the first row (header)
-            df = pd.read_csv(full_path, sep="\t", names=["word", "count"], engine="python", header=None, skiprows=1)
-
-            # Lemmatize the words
+            df = pd.read_csv(full_path, sep="\t", names=["word", "count"], 
+                           engine="python", header=None, skiprows=1)
             df["lemma"] = df["word"].apply(lemmatize_word)
-
-            # Create a new DataFrame with only the lemma and count columns
             df_final = df[["lemma", "count"]]
-
-            # Save the updated file without headers
-            output_file = f"PG{id}_counts_lemmatized.txt"
-            df_final.to_csv(os.path.join(text_folder_path, output_file), sep="\t", index=False, header=False)
-
+            
+            output_file = f"PG{file_id}_counts_lemmatized.txt"
+            output_path = os.path.join(text_folder_path, output_file)
+            df_final.to_csv(output_path, sep="\t", index=False, header=False)
+            
             print(f"Lemmatized file saved as {output_file}")
+            return file_id, output_path  # Return both values
 
+        except FileNotFoundError:
+            print(f"File '{full_path}' not found.")
+            return None, None
 
-        text_folder_path = r"SPGC-counts-2018-07-18"
-        file_name = f"PG{id}_counts_lemmatized.txt" # Use the lemmatized file name
-        full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name
-
-    perform_text_analysis()
+    # Get the values from the function
+    file_id, full_path = perform_text_analysis()
+    
+    if file_id:  # Only proceed if file_id was obtained
+        text_folder_path = "SPGC-counts-2018-07-18"
+        file_name = f"PG{file_id}_counts_lemmatized.txt"  # Now file_id exists
+        full_path = os.path.join(text_folder_path, file_name)
+        
+       
         
 
     def emotion_dictionary(file_path):
@@ -332,7 +326,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
             return second_lexicon
 
     text_folder_path = r"SPGC-counts-2018-07-18"
-    file_name = f"PG{id}_counts_lemmatized.txt" # Use the lemmatized file name
+    file_name = f"PG{file_id}_counts_lemmatized.txt" # Use the lemmatized file name
     full_path = os.path.join(text_folder_path, file_name)  # Combine folder and file name   
     text_result = analysis (full_path)
         # print (text_result)
@@ -405,7 +399,7 @@ if users_choice in ["2", "2.", "2. emotion analysis", "two", "emotion analysis"]
         # Display the chart
     plt.tight_layout()
         # plt.show()        
-    plt.savefig(f"barchart{id}.png")  
+    plt.savefig(f"barchart{file_id}.png")  
     print ('The barchart is saved.')
 
                         
