@@ -31,7 +31,7 @@ except ImportError:
 try:
     nlp = spacy.load("en_core_web_lg")
 except OSError:
-    download("en_core_web_lg")  # Download the model if not already installed
+    download("en_core_web_lg")  
     nlp = spacy.load("en_core_web_lg")
 
 # 'r' tells Python to treat the backslashes as literal characters.
@@ -106,7 +106,6 @@ subject_corpus = [" ".join(subject.split()) for subject in cleaned_subjects]
 subject_df = pd.DataFrame(subject_counts.items(), columns=["Subject", "Frequency"])
 subject_df = subject_df.sort_values(by="Frequency", ascending=False).head(20)  # Top 20 subjects
 
-# User choice handling
 if users_choice in ["1", "1.", "subject wordmap", "wordmap"]:
     # Create and display a word cloud
     subject_text = ' '.join(cleaned_subjects)
@@ -124,22 +123,25 @@ if users_choice in ["1", "1.", "subject wordmap", "wordmap"]:
 
 
 if users_choice in ["3", "3.", "subject frequency bar chart", "bar chart"]:
-    # Create and display a bar chart
-        # Create and display a bar chart
-    plt.figure(figsize=(12, 6))
-    sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis", legend=False)
-    plt.xlabel("Frequency", fontsize=12)
-    plt.ylabel("Subjects", fontsize=12)
-    plt.title("Top 20 Most Frequent Subjects", fontsize=14)
+    plt.figure(figsize=(16, 12))  # Wider than tall
+    ax = sns.barplot(x="Frequency", y="Subject", 
+                    data=subject_df.sort_values("Frequency", ascending=False),
+                    palette="viridis")
+    plt.title("Top 20 Subjects by Frequency", fontsize=14)
+    plt.xlabel("Count", fontsize=12)
+    plt.ylabel("")  # Remove redundant y-label
+    ax.tick_params(axis='y', labelsize=10)
+    plt.tight_layout()
+    plt.savefig("subject_frequencies.png", dpi=300, bbox_inches='tight')
     plt.show()
     plt.savefig("barplot.png")
 
 
 
 
-# 📌 Subject Frequency Bar Chart (Choice 3)
+
 if users_choice in ["3", "bar chart", "subject frequency bar chart"]:
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 18))
     sns.barplot(x=subject_df["Frequency"], y=subject_df["Subject"], palette="viridis")
     plt.xlabel("Frequency", fontsize=12)
     plt.ylabel("Subjects", fontsize=12)
@@ -251,11 +253,11 @@ if users_choice in ["4", "Topic Clustering", "four"]:
         plt.title(f"Topic {i+1}")
 
     plt.tight_layout()
-    plt.savefig("LDA_wordclouds.png")  # ✅ Save BEFORE plt.show()
+    plt.savefig("LDA_wordclouds.png") 
     plt.show()
     print("✅ Word clouds saved as 'LDA_wordclouds.png'")
 
-    # Confirm where the files are saved
+ 
     print("Current working directory:", os.getcwd())
 
 
@@ -292,9 +294,9 @@ if users_choice in ["2", "2.", "emotion analysis"]:
     # Get the values from the function
     file_id, full_path = perform_text_analysis()
     
-    if file_id:  # Only proceed if file_id was obtained
+    if file_id:  
         text_folder_path = "SPGC-counts-2018-07-18"
-        file_name = f"PG{file_id}_counts_lemmatized.txt"  # Now file_id exists
+        file_name = f"PG{file_id}_counts_lemmatized.txt"  
         full_path = os.path.join(text_folder_path, file_name)
         
        
